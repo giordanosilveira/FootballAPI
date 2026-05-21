@@ -4,7 +4,9 @@ const teamQueries = require('../database/queries/teamQueries');
 
 class TeamRepository extends BaseRepository {
     constructor() {
-        super(teamQueries);
+        super(teamQueries, {
+            allowedFindFields: ['id', 'team_id', 'name', 'country_id', 'founded', 'national', 'created_at', 'updated_at'],
+        });
     }
 
     toEntity(row) {
@@ -12,7 +14,7 @@ class TeamRepository extends BaseRepository {
             id: row.id,
             name: row.name,
             teamId: row.team_id,
-            country: row.country,
+            country: row.country || { id: row.country_id },
             founded: row.founded,
             national: row.national,
             logo: row.logo,
@@ -25,7 +27,7 @@ class TeamRepository extends BaseRepository {
         return [
             entity.teamId,
             entity.name,
-            entity.country ? entity.country.id : null,
+            entity.country_id || (entity.country ? entity.country.id : null),
             entity.founded,
             entity.national,
             entity.logo,

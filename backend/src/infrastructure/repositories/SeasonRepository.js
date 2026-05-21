@@ -4,7 +4,9 @@ const seasonQueries = require('../database/queries/seasonQueries');
 
 class SeasonRepository extends BaseRepository {
     constructor() {
-        super(seasonQueries);
+        super(seasonQueries, {
+            allowedFindFields: ['id', 'year', 'created_at', 'updated_at'],
+        });
     }
 
     async findByYear(year) {

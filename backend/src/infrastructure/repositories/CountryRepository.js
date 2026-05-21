@@ -4,7 +4,9 @@ const countryQueries = require('../database/queries/countryQueries');
 
 class CountryRepository extends BaseRepository {
     constructor() {
-        super(countryQueries);
+        super(countryQueries, {
+            allowedFindFields: ['id', 'name', 'code', 'created_at', 'updated_at'],
+        });
     }
 
     async findByCode(code) {
