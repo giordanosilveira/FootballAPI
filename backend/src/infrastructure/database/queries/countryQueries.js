@@ -24,6 +24,16 @@ const countryQueries = {
         RETURNING *;
     `,
 
+    update: `
+        UPDATE countries
+        SET name = $2,
+            code = $3,
+            flag = $4,
+            updated_at = NOW()
+        WHERE id = $1
+        RETURNING *;
+    `,
+
     delete: `
         DELETE FROM countries
         WHERE id = $1;

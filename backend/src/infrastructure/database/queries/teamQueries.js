@@ -27,6 +27,19 @@ const teamQueries = {
         RETURNING *;
     `,
 
+    update: `
+        UPDATE teams
+        SET team_id = $2,
+            name = $3,
+            country_id = $4,
+            founded = $5,
+            national = $6,
+            logo = $7,
+            updated_at = NOW()
+        WHERE id = $1
+        RETURNING *;
+    `,
+
     delete: `
         DELETE FROM teams
         WHERE id = $1;

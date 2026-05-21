@@ -22,6 +22,14 @@ const seasonQueries = {
         RETURNING *;    
     `,
 
+    update: `
+        UPDATE seasons
+        SET year = $2,
+            updated_at = NOW()
+        WHERE id = $1
+        RETURNING *;
+    `,
+
     delete: `
         DELETE FROM seasons
         WHERE id = $1;

@@ -26,6 +26,18 @@ const leagueQueries = {
         RETURNING *;    
     `,
 
+    update: `
+        UPDATE leagues
+        SET league_id = $2,
+            name = $3,
+            type = $4,
+            logo = $5,
+            country_id = $6,
+            updated_at = NOW()
+        WHERE id = $1
+        RETURNING *;
+    `,
+
     delete: `
         DELETE FROM leagues
         WHERE id = $1;
