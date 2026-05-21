@@ -2,10 +2,11 @@ const IBaseRepository = require('../../domain/repositories/IBaseRepository');
 const db = require('../database/connection');
 
 class BaseRepository extends IBaseRepository {
-    constructor(queries) {
+    constructor(queries, options = {}) {
         super();
         this.queries    = queries;
         this.db         = db;
+        this.allowedFindFields = new Set(options.allowedFindFields || []);
     }
 
     async findAll() {
@@ -19,6 +20,7 @@ class BaseRepository extends IBaseRepository {
     }
 
     async findByField(field, value) {
+        this.validateFindField(field);
         const rows = await this.db.manyOrNone(this.queries.findByField, [field, value]);
         return rows.map(row => this.toEntity(row));
     }
@@ -42,7 +44,10 @@ class BaseRepository extends IBaseRepository {
             throw new Error('Update query not configured');
         }
 
-        const payload = this.toPersistence({ ...entity, id });
+        const persisted = this.toPersistence(entity);
+        const payload = Array.isArray(persisted)
+            ? [id, ...persisted]
+            : { id, ...persisted };
         const row = await this.db.oneOrNone(this.queries.update, payload);
         return row ? this.toEntity(row) : null;
     }
@@ -108,6 +113,20 @@ class BaseRepository extends IBaseRepository {
 
     toCamelCase(value) {
         return value.replace(/_([a-z])/g, (_, char) => char.toUpperCase());
+    }
+
+    validateFindField(field) {
+        if (typeof field !== 'string' || !/^[a-z_][a-z0-9_]*$/i.test(field)) {
+            throw new Error('Invalid field name for query');
+        }
+
+        if (!this.allowedFindFields.size) {
+            return;
+        }
+
+        if (!this.allowedFindFields.has(field)) {
+            throw new Error(`Field not allowed for findByField: ${field}`);
+        }
     }
 }
 
