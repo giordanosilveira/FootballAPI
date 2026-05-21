@@ -5,6 +5,6 @@ class ILeagueRepository extends IBaseRepository {
         super();
     }
     
-    async findByCode(code) {throw new Error('Method not implemented');}
+    async findByLeagueId(leagueId) {throw new Error('Method not implemented');}
 }
 module.exports = ILeagueRepository;
