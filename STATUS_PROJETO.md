@@ -1,123 +1,106 @@
 # Status do Projeto - FootballAPI
 
-Data: 2026-05-13
+Data: 2026-05-20
 
 ## Objetivo deste documento
-Consolidar o que foi revisado e corrigido até agora no backend, para facilitar a retomada do projeto.
+Registrar o estado real do backend ao final do dia, consolidando o que ja foi concluido e o que fica como proximo passo.
 
-## Contexto levantado
-- Estrutura atual organizada em camadas: domain, application e infrastructure.
-- Entidades de domínio já existentes: Season, Country, League e Team.
-- Migrations SQL existentes para seasons, countries, leagues e teams.
-- Camadas ainda vazias neste momento: use-cases, controllers, routes e external.
-- Camada de infraestrutura com repositórios concretos já presentes: BaseRepository, CountryRepository, LeagueRepository, SeasonRepository e TeamRepository.
+## Resumo executivo
+- Arquitetura em camadas mantida: domain, application e infrastructure.
+- Camada de repositorios foi estabilizada com contratos e queries de update.
+- Use-cases de Country foram criados na camada de application.
+- Erros customizados foram introduzidos no dominio e ja estao sendo usados em parte dos use-cases.
+- Camada HTTP de Country (controllers e routes) ainda nao foi implementada.
 
-## Correções realizadas
+## O que foi concluido
 
-### 1) BaseRepository ajustado para execução real
-Arquivo: backend/src/infrastructure/repositories/BaseRepository.js
+### 1) Repositorios e contratos (rodada Priority 1)
+Arquivos principais:
+- backend/src/infrastructure/repositories/BaseRepository.js
+- backend/src/infrastructure/repositories/CountryRepository.js
+- backend/src/infrastructure/repositories/LeagueRepository.js
+- backend/src/infrastructure/repositories/SeasonRepository.js
+- backend/src/infrastructure/repositories/TeamRepository.js
+- backend/src/domain/repositories/IBaseRepository.js
+- backend/src/domain/repositories/ILeagueRepository.js
 
-Mudanças aplicadas:
-- Ajuste de leitura com pg-promise:
-  - findAll e findByField passaram a usar retorno direto de manyOrNone (array), sem destructuring de rows.
-- Persistência unificada:
-  - save passou a usar queries.save com fallback para queries.create.
-  - create mantido como alias para save.
-- Métodos de contrato implementados:
-  - update, delete, exists e count.
-- Mapeamento implementado:
-  - toEntity com retorno padrão do row.
-  - toPersistence com mapeamento automático por colunas do INSERT.
-  - suporte a snake_case e camelCase no toPersistence.
-- Helpers adicionados:
-  - extractInsertColumns para extrair colunas do SQL de INSERT.
-  - toCamelCase para normalização de chaves.
+Concluido:
+- BaseRepository com metodos findAll, findById, findByField, save, update, delete, exists e count.
+- save com fallback para queries.save ou queries.create.
+- create mantido como alias de save no repositorio base.
+- toPersistence com mapeamento por colunas do INSERT e suporte a snake_case/camelCase.
+- validacao de campo dinamico em findByField com whitelist por entidade (allowedFindFields).
+- contrato de ILeagueRepository corrigido.
 
-### 2) SQL dinâmico corrigido em findByField
+### 2) Queries SQL por entidade
 Arquivos:
 - backend/src/infrastructure/database/queries/countryQueries.js
 - backend/src/infrastructure/database/queries/leagueQueries.js
 - backend/src/infrastructure/database/queries/seasonQueries.js
 - backend/src/infrastructure/database/queries/teamQueries.js
 
-Mudança aplicada:
-- findByField alterado de WHERE $1 = $2 para WHERE $1:name = $2.
+Concluido:
+- findByField com identificador dinamico seguro ($1:name).
+- query update adicionada para Country, League, Season e Team.
 
-Motivo:
-- $1:name no pg-promise trata o parâmetro como identificador SQL (nome de coluna), permitindo consulta dinâmica por campo de forma correta.
+### 3) Use-cases de Country
+Arquivos:
+- backend/src/application/use-cases/country/CreateCountry.js
+- backend/src/application/use-cases/country/GetAllCountries.js
+- backend/src/application/use-cases/country/GetCountryByCode.js
+- backend/src/application/use-cases/country/GetCountryById.js
+- backend/src/application/use-cases/country/UpdateCountry.js
+- backend/src/application/use-cases/country/DeleteCountry.js
 
-### 3) Interface de League corrigida
-Arquivo: backend/src/domain/repositories/ILeagueRepository.js
+Concluido:
+- Casos de uso de CRUD e consulta por codigo criados.
+- Validacoes basicas de entrada para cenarios com id.
+- Uso de erro de dominio em casos de not found e validacao.
 
-Mudanças aplicadas:
-- Nome da classe corrigido de ICountryRepository para ILeagueRepository.
-- Export corrigido para ILeagueRepository.
+### 4) Erros customizados de dominio
+Arquivos:
+- backend/src/domain/errors/AppError.js
+- backend/src/domain/errors/NotFoundError.js
+- backend/src/domain/errors/ValidationError.js
+- backend/src/domain/errors/ConflictError.js
 
-### 4) Contrato base alinhado
-Arquivo: backend/src/domain/repositories/IBaseRepository.js
+Concluido:
+- Hierarquia de erros de dominio criada.
+- AppError com statusCode para facilitar tratamento HTTP.
+- Use-cases de Country ja comecaram a usar esses erros.
 
-Mudança observada no estado atual:
-- Método create não está mais no contrato base.
-- Contrato está centrado em save, update, delete, exists e count.
+## Estado atual da camada HTTP
+Arquivos:
+- backend/src/infrastructure/http/controllers
+- backend/src/infrastructure/http/routes
 
-### 5) CountryRepository implementado
-Arquivo: backend/src/infrastructure/repositories/CountryRepository.js
+Status:
+- Ainda vazios.
+- server.js contem apenas endpoints de health e health/db.
+- Nao ha wiring de DI para instanciar repositorio + use-cases + controller + rotas de Country.
 
-Mudanças aplicadas:
-- Repositório concreto criado para Country.
-- Extensão de BaseRepository com countryQueries.
-- Implementação de findByCode(code), retornando uma entidade Country ou null.
-- Mapeamento explícito de entidade em toEntity(row).
-- Mapeamento explícito de persistência em toPersistence(entity).
+## Validacoes executadas
+- Smoke test previo de repositorios e queries: OK.
+- Smoke test atual de carregamento dos use-cases de Country e erros customizados: OK.
 
-## Validações executadas
-- Verificação de problemas nos arquivos alterados: sem erros.
-- Smoke test de carregamento dos módulos alterados com Node: OK.
-
-Comando de smoke test executado:
-cd backend && node -e "require('./src/infrastructure/repositories/BaseRepository'); require('./src/infrastructure/database/queries/countryQueries'); require('./src/infrastructure/database/queries/leagueQueries'); require('./src/infrastructure/database/queries/seasonQueries'); require('./src/infrastructure/database/queries/teamQueries'); console.log('ok')"
+Comando de validacao executado hoje:
+cd backend && node -e "require('./src/application/use-cases/country/CreateCountry'); require('./src/application/use-cases/country/DeleteCountry'); require('./src/application/use-cases/country/GetAllCountries'); require('./src/application/use-cases/country/GetCountryByCode'); require('./src/application/use-cases/country/GetCountryById'); require('./src/application/use-cases/country/UpdateCountry'); require('./src/domain/errors/AppError'); require('./src/domain/errors/ConflictError'); require('./src/domain/errors/NotFoundError'); require('./src/domain/errors/ValidationError'); console.log('country-use-cases-and-errors-ok')"
 
 Resultado:
-ok
+country-use-cases-and-errors-ok
 
-Smoke test adicional executado:
-cd backend && node -e "require('./src/infrastructure/repositories/CountryRepository'); console.log('country-repo-ok')"
+## Pendencias reais para a retomada
+- Implementar CountryController na camada HTTP.
+- Implementar countryRoutes e registrar no server.js.
+- Criar middleware global de tratamento de erro (AppError -> statusCode; fallback 500).
+- Ajustar consistencia de uso do ConflictError em CreateCountry (assinatura esperada: resource e identifier).
+- Revisar export de GetCountryById para garantir padrao igual aos demais use-cases.
+- Opcional: remover metodo create de BaseRepository no futuro e padronizar chamadas para save, para aderencia estrita ao contrato de IBaseRepository.
 
-Resultado:
-country-repo-ok
-
-## Pendências imediatas (somente correção, sem features novas)
-- Incluir queries.update nos arquivos de queries para suportar update no BaseRepository sem lançar erro de configuração.
-- Validar que todos os campos usados por findByField estejam em uma whitelist por entidade (boa prática de segurança para coluna dinâmica).
-- Revisar nome do método findByCode em ICountryRepository, se a intenção for manter um padrão mais explícito por entidade.
-
-## Próximo passo recomendado
-Fechar a rodada de correções estruturais adicionando queries.update para Country, League, Season e Team, mantendo o foco em estabilidade antes de criar use-cases e rotas.
-
-## Mapa simples do fluxo
-
-### Fluxo atual
-API/entrada
-→ [backend/src/server.js](backend/src/server.js)
-→ infraestrutura HTTP ainda vazia
-→ repositórios concretos em [backend/src/infrastructure/repositories](backend/src/infrastructure/repositories)
-→ [BaseRepository](backend/src/infrastructure/repositories/BaseRepository.js)
-→ queries SQL em [backend/src/infrastructure/database/queries](backend/src/infrastructure/database/queries)
-→ PostgreSQL
-
-### Fluxo que o projeto deve seguir quando estiver completo
-controller
-→ use-case
-→ repository interface em [backend/src/domain/repositories](backend/src/domain/repositories)
-→ repository concreto em [backend/src/infrastructure/repositories](backend/src/infrastructure/repositories)
-→ queries SQL em [backend/src/infrastructure/database/queries](backend/src/infrastructure/database/queries)
-→ PostgreSQL
-
-### Leitura rápida das responsabilidades
-- server: sobe a aplicação e registra middleware/rotas.
-- controller: recebe request e devolve response.
-- use-case: concentra a regra de negócio.
-- repository interface: define o contrato.
-- repository concreto: traduz o contrato para acesso ao banco.
-- queries: guarda o SQL de cada entidade.
-- banco: persiste e retorna os dados.
+## Proximo passo recomendado
+Subir a vertical completa de Country na HTTP:
+1. Criar CountryController chamando os use-cases.
+2. Criar countryRoutes com endpoints REST.
+3. Registrar rotas em server.js.
+4. Adicionar error handler global baseado em AppError.
+5. Validar com testes de rota (health, CRUD Country, cenarios de erro 400/404/409).
