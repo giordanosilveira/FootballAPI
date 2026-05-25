@@ -3,6 +3,10 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const db = require('./infrastructure/database/connection'); // importa a conexão
+const CountryRepository = require('./infrastructure/repositories/CountryRepository');
+const CountryService = require('./application/services/CountryService');
+const CountryController = require('./infrastructure/http/controllers/CountryController');
+const createCountryRoutes = require('./infrastructure/http/routes/countryRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -10,6 +14,10 @@ const PORT = process.env.PORT || 3001;
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+const countryRepository = new CountryRepository();
+const countryService = new CountryService(countryRepository);
+const countryController = new CountryController({ countryService });
 
 // Rotas
 app.get('/health', (req, res) => {
@@ -25,6 +33,8 @@ app.get('/health/db', async (req, res) => {
     res.status(500).json({ status: 'error', message: error.message });
   }
 });
+
+app.use('/countries', createCountryRoutes(countryController));
 
 // O listen sempre por último
 app.listen(PORT, () => {
