@@ -23,3 +23,5 @@ class GetCountryById {
         return country;
     }
 }
+
+module.exports = GetCountryById;
