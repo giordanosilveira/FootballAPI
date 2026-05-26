@@ -35,14 +35,12 @@ test('CountryService create/update/delete flow works', async () => {
         id: 1,
         name: 'Brazil',
         code: 'BR',
-        flag: undefined,
     });
     await assert.deepEqual(await service.getById(1), { id: 1 });
     await assert.deepEqual(await service.update(1, { name: 'Portugal', code: 'PT' }), {
         id: 1,
         name: 'Portugal',
         code: 'PT',
-        flag: undefined,
     });
     await assert.equal(await service.delete(1), undefined);
 });
