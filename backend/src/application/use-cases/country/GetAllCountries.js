@@ -1,10 +1,10 @@
-class GetAllCountries {
-    constructor(countryRepository) {
-        this.countryRepository = countryRepository;
-    }
+const GetAll = require('../shared/GetAll');
 
-    async execute() {
-        return await this.countryRepository.findAll();
+class GetAllCountries extends GetAll {
+    constructor(countryRepository) {
+        super(countryRepository, {
+            resourceName: 'Country',
+        });
     }
 }
 

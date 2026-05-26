@@ -1,23 +1,21 @@
-const ConflictError = require('../../../domain/errors/ConflictError');
+const Create = require('../shared/Create');
 const ValidationError = require('../../../domain/errors/ValidationError');
 
-class CreateCountry {
+class CreateCountry extends Create {
   constructor(countryRepository) {
-    this.countryRepository = countryRepository;
-  }
+    super(countryRepository, {
+      resourceName: 'Country',
+      uniqueField: 'code',
+      validateInput: (input) => {
+        if (!input || typeof input !== 'object') {
+          throw new ValidationError('Input data must be an object');
+        }
 
-  async execute({ name, code, flag }) {
-    if (!name || !code) {
-      throw new ValidationError('Name and code are required');
-    }
-    
-    const existingCountry = await this.countryRepository.findByCode(code);
-    if (existingCountry) {
-      throw new ConflictError('Country', code);
-    }
-    
-    const country = await this.countryRepository.create({ name, code, flag });
-    return country;
+        if (!input.name || !input.code) {
+          throw new ValidationError('Name and code are required');
+        }
+      },
+    });
   }
 }
 
