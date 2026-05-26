@@ -13,7 +13,7 @@ class CreateCountry {
     
     const existingCountry = await this.countryRepository.findByCode(code);
     if (existingCountry) {
-      throw new ConflictError(`Country with code '${code}' already exists`);
+      throw new ConflictError('Country', code);
     }
     
     const country = await this.countryRepository.create({ name, code, flag });
