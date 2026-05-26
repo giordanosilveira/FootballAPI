@@ -1,8 +1,8 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-const CountryController = require('../src/infrastructure/http/controllers/CountryController');
-const { createMockResponse } = require('./helpers');
+const CountryController = require('../../../src/infrastructure/http/controllers/CountryController');
+const { createMockResponse } = require('../../helpers/http');
 
 test('CountryController returns expected status codes and payloads', async () => {
     const countryService = {

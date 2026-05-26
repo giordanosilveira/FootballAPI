@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "node --test --test-concurrency=1",
-    "test:unit": "node --test --test-concurrency=1 test/country-controller.test.js test/country-routes.test.js test/country-service.test.js test/country-use-cases.test.js test/errors.test.js test/queries.test.js test/repositories.test.js test/server-smoke.test.js",
-    "test:integration:http": "node --test --test-concurrency=1 test/country-http.integration.test.js",
+    "test:unit": "node --test --test-concurrency=1 test/unit/**/*.test.js",
+    "test:integration:http": "node --test --test-concurrency=1 test/integration/http/country-http.mock.integration.test.js",
     "test:integration:db:prepare": "node src/infrastructure/database/prepareTestDatabase.js",
-    "test:integration:db": "node --test --test-concurrency=1 test/country-http.db.integration.test.js",
+    "test:integration:db": "node --test --test-concurrency=1 test/integration/http/country-http.db.integration.test.js",
     "test:all": "npm run test:unit && npm run test:integration:http && npm run test:integration:db",
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",

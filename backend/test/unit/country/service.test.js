@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-const CountryService = require('../src/application/services/CountryService');
+const CountryService = require('../../../src/application/services/CountryService');
 
 test('CountryService delegates to use-cases', async () => {
     const repo = {

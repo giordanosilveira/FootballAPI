@@ -1,9 +1,9 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-const db = require('../src/infrastructure/database/connection');
-const BaseRepository = require('../src/infrastructure/repositories/BaseRepository');
-const CountryRepository = require('../src/infrastructure/repositories/CountryRepository');
+const db = require('../../../src/infrastructure/database/connection');
+const BaseRepository = require('../../../src/infrastructure/repositories/BaseRepository');
+const CountryRepository = require('../../../src/infrastructure/repositories/CountryRepository');
 
 function withDbStub(stubbedMethods, fn) {
     const original = {};

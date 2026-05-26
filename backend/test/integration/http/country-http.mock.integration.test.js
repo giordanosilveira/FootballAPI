@@ -3,8 +3,8 @@ const assert = require('node:assert/strict');
 const express = require('express');
 const request = require('supertest');
 
-const CountryController = require('../src/infrastructure/http/controllers/CountryController');
-const createCountryRoutes = require('../src/infrastructure/http/routes/countryRoutes');
+const CountryController = require('../../../src/infrastructure/http/controllers/CountryController');
+const createCountryRoutes = require('../../../src/infrastructure/http/routes/countryRoutes');
 
 function makeApp(countryService) {
     const app = express();

@@ -1,10 +1,10 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-const AppError = require('../src/domain/errors/AppError');
-const ConflictError = require('../src/domain/errors/ConflictError');
-const NotFoundError = require('../src/domain/errors/NotFoundError');
-const ValidationError = require('../src/domain/errors/ValidationError');
+const AppError = require('../../../src/domain/errors/AppError');
+const ConflictError = require('../../../src/domain/errors/ConflictError');
+const NotFoundError = require('../../../src/domain/errors/NotFoundError');
+const ValidationError = require('../../../src/domain/errors/ValidationError');
 
 test('AppError stores message and status code', () => {
     const error = new AppError('boom');

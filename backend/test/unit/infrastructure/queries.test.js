@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-const countryQueries = require('../src/infrastructure/database/queries/countryQueries');
+const countryQueries = require('../../../src/infrastructure/database/queries/countryQueries');
 
 test('country queries expose the expected SQL statements', () => {
     assert.ok(countryQueries.findAll.includes('FROM countries'));

@@ -1,15 +1,15 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-const CreateCountry = require('../src/application/use-cases/country/CreateCountry');
-const GetAllCountries = require('../src/application/use-cases/country/GetAllCountries');
-const GetCountryByCode = require('../src/application/use-cases/country/GetCountryByCode');
-const GetCountryById = require('../src/application/use-cases/country/GetCountryById');
-const UpdateCountry = require('../src/application/use-cases/country/UpdateCountry');
-const DeleteCountry = require('../src/application/use-cases/country/DeleteCountry');
-const ValidationError = require('../src/domain/errors/ValidationError');
-const NotFoundError = require('../src/domain/errors/NotFoundError');
-const ConflictError = require('../src/domain/errors/ConflictError');
+const CreateCountry = require('../../../src/application/use-cases/country/CreateCountry');
+const GetAllCountries = require('../../../src/application/use-cases/country/GetAllCountries');
+const GetCountryByCode = require('../../../src/application/use-cases/country/GetCountryByCode');
+const GetCountryById = require('../../../src/application/use-cases/country/GetCountryById');
+const UpdateCountry = require('../../../src/application/use-cases/country/UpdateCountry');
+const DeleteCountry = require('../../../src/application/use-cases/country/DeleteCountry');
+const ValidationError = require('../../../src/domain/errors/ValidationError');
+const NotFoundError = require('../../../src/domain/errors/NotFoundError');
+const ConflictError = require('../../../src/domain/errors/ConflictError');
 
 test('CreateCountry validates input', async () => {
     const repo = {

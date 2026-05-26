@@ -8,7 +8,7 @@ test('server boots without throwing', () => {
         process.execPath,
         ['-e', "require('./src/server'); setTimeout(() => process.exit(0), 200)"],
         {
-            cwd: path.resolve(__dirname, '..'),
+            cwd: path.resolve(__dirname, '../../..'),
             env: {
                 ...process.env,
                 PORT: '0',

@@ -1,7 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-const createCountryRoutes = require('../src/infrastructure/http/routes/countryRoutes');
+const createCountryRoutes = require('../../../src/infrastructure/http/routes/countryRoutes');
 
 test('country routes register the expected endpoints', () => {
     const controller = {

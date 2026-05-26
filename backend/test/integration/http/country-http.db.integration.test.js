@@ -8,8 +8,8 @@ const originalDbName = process.env.DB_NAME;
 const testDbName = process.env.DB_NAME_TEST || `${process.env.DB_NAME}_test`;
 process.env.DB_NAME = testDbName;
 
-const db = require('../src/infrastructure/database/connection');
-const createApp = require('../src/app');
+const db = require('../../../src/infrastructure/database/connection');
+const createApp = require('../../../src/app');
 
 let app;
 
